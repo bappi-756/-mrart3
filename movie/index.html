@@ -1,0 +1,1177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clory MDB - Your Ultimate Movie Destination</title>
+	 <link rel="icon" type="image/x-icon" href="movie.gif">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        :root {
+    --primary: #ffffff;      /* White */
+    --secondary: #C6D4E5;    /* Soft Light Blue */
+    --accent: #FF4D79;       /* Soft Pink */
+    --text: #333333;         /* Dark Gray */
+    --background: #FFFDFA;   /* Light Gray */
+	
+	
+		<!-- main color--primary: #fff;
+            --secondary: #E9EEF6;
+            --accent: #FF3366;
+            --text: #000;-->
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+        }
+
+        .header {
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: ;
+            width: 100%;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: bold;
+            background: linear-gradient(to right, #4285f4, #d96570); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+			text-decoration: none;
+        }
+
+        .search-bar {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.8rem 1.5rem;
+            border-radius: 30px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+
+        .categories {
+            padding: 1rem;
+            margin-top: 5px;
+            background: var(--secondary);
+            display: flex;
+            overflow-x: auto;
+            gap: 1rem;
+            scrollbar-width: none;
+        }
+
+        .categories::-webkit-scrollbar {
+            display: none;
+        }
+
+        .category-btn {
+            padding: 0.5rem 1.5rem;
+            background: rgba(255, 51, 102, 0.1);
+            border: 1px solid var(--accent);
+            color: var(--text);
+            border-radius: 20px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: filter 0.3s ease;
+        }
+
+        .category-btn:hover {
+            filter: blur(0.5px);
+			background: transparent;
+        }
+
+        .section {
+            padding: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+             background: linear-gradient(to right,#159957, #155799); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+        }
+
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .movie-card {
+            background: var(--secondary);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: filter 0.3s ease;
+            cursor: pointer;
+			    position: relative; /* Required for positioning the arrow */
+    transition: box-shadow 0.3s; /* Optional: Adds shadow transition */
+        }
+
+.movie-card:hover {
+    filter: blur(0.5px); /* Apply a light blur effect on hover */
+}
+
+.movie-card::after {
+    content: ''; /* Empty content for the arrow */
+    position: absolute;
+    bottom: 10px; /* Position the arrow above the bottom */
+    left: 50%; /* Center the arrow */
+    transform: translateX(-50%); /* Center the arrow horizontally */
+    width: 0;
+    height: 0;
+    border-left: 10px solid transparent; /* Left side of the arrow */
+    border-right: 10px solid transparent; /* Right side of the arrow */
+    border-top: 10px solid #FF6B6B; /* Color of the arrow */
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s; /* Transition for smooth appearance */
+}
+
+.movie-card:hover::after {
+    opacity: 1; /* Show the arrow on hover */
+}
+        .movie-poster {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .movie-info {
+            padding: 1rem;
+        }
+
+        .movie-info h3 {
+            margin-bottom: 0.5rem;
+        }
+
+        .rating {
+            background: linear-gradient(to right,#159957, #155799, #3f5efb); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+        }
+
+        /* Movie Details Page */
+        .movie-details {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            z-index: 200;
+            overflow-y: auto;
+            padding: 80px 2rem 2rem;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 30px;
+            left: 20px;
+            padding: 0.5rem 1rem;
+            background: var(--accent);
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .movie-hero {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .movie-poster-large {
+            width: 100%;
+            height: 450px;
+            object-fit: cover;
+            border-radius: 15px;
+        }
+
+        .movie-details-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .watch-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .watch-option {
+            padding: 1rem;
+            background: var(--secondary);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .cast-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .cast-card {
+            background: var(--secondary);
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .cast-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .cast-info {
+            padding: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .movie-hero {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .search-bar {
+                width: 100%;
+            }
+        }
+		
+		
+        /* Floating User Profile */
+        .floating-profile {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(15, 15, 26, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 5px 10px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 99;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .floating-profile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .floating-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #159957;
+			
+        }
+
+        .floating-profile .user-name {
+            color: white;
+            font-weight: 500;
+            font-size: 1rem;
+        }
+
+        /* Improved Popup Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .popup-content {
+            background: linear-gradient(145deg, #ffffff, #f3f3f3);
+            padding: 2rem;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .popup-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .popup-header h2 {
+            background: linear-gradient(to right,#159957, #155799);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .popup-header p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .preview-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 1.5rem auto;
+        }
+
+        .preview-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #4285f4;
+            background: #fff;
+        }
+
+        .image-upload-label {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background: #4285f4;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+        }
+
+        .popup-input {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 0.8rem 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .popup-input:focus {
+            border-color: #4285f4;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+        }
+
+        .popup-button {
+            background: linear-gradient(to right,#159957, #155799, #3f5efb);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            width: 100%;
+        }
+
+        .popup-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+        }
+
+        #profileImage {
+            display: none;
+        }
+
+        @media (max-width: 480px) {
+            .popup-content {
+                padding: 1.5rem;
+            }
+
+            .popup-header h2 {
+                font-size: 1.5rem;
+            }
+
+            .preview-container {
+                width: 100px;
+                height: 100px;
+            }
+
+            .floating-profile {
+                bottom: 10px;
+                left: 10px;
+                padding: 8px 16px;
+            }
+
+            .floating-profile img {
+                width: 32px;
+                height: 32px;
+            }
+
+            .floating-profile .user-name {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Modified User Profile Popup -->
+    <div id="profilePopup" class="popup-overlay" style="display: none;">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2>Welcome to Clory MDB!</h2>
+                <p>Please enter your name and choose a profile picture</p>
+            </div>
+            <div class="preview-container">
+                <img id="previewImage" src="/api/placeholder/120/120" alt="Preview" class="preview-image">
+                <label for="profileImage" class="image-upload-label"><i class="fa fa-plus"></i></label>
+            </div>
+            <input type="file" id="profileImage" accept="image/*" hidden>
+            <input type="text" id="userName" placeholder="Enter your name" class="popup-input">
+            <button onclick="saveUserProfile()" class="popup-button">Start Watching</button>
+        </div>
+    </div>
+
+    <!-- Floating User Profile -->
+    <a href="index.html"><div id="floatingProfile" class="floating-profile" style="display: none;">
+        <img id="profileImg" src="/api/placeholder/40/40" alt="Profile">
+        <span class="user-name" id="profileName"></span>
+    </div></a>
+
+<script>
+        // Check if user profile exists
+        function checkUserProfile() {
+            const userProfile = localStorage.getItem('userProfile');
+            if (!userProfile) {
+                document.getElementById('profilePopup').style.display = 'flex';
+            } else {
+                displayUserProfile(JSON.parse(userProfile));
+            }
+        }
+
+        // Save user profile
+        function saveUserProfile() {
+            const name = document.getElementById('userName').value;
+            if (!name) {
+                alert('Please enter your name');
+                return;
+            }
+
+            const imageFile = document.getElementById('profileImage').files[0];
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const userProfile = {
+                        name: name,
+                        image: e.target.result
+                    };
+                    localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                    displayUserProfile(userProfile);
+                    document.getElementById('profilePopup').style.display = 'none';
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                const userProfile = {
+                    name: name,
+                    image: '/api/placeholder/40/40'
+                };
+                localStorage.setItem('userProfile', JSON.stringify(userProfile));
+                displayUserProfile(userProfile);
+                document.getElementById('profilePopup').style.display = 'none';
+            }
+        }
+
+        // Display user profile in floating div
+        function displayUserProfile(profile) {
+            const floatingProfile = document.getElementById('floatingProfile');
+            document.getElementById('profileImg').src = profile.image;
+            document.getElementById('profileName').textContent = profile.name;
+            floatingProfile.style.display = 'flex';
+        }
+
+        // Preview image before upload
+        document.getElementById('profileImage').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('previewImage').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Call checkUserProfile when page loads
+        window.addEventListener('load', checkUserProfile);
+    </script>
+
+    <div class="header">
+        <a href="" class="logo">Clory MDB</a>
+        <div class="search-bar">
+            <input type="text" placeholder="Search C MDB movies...">
+        </div>
+    </div>
+
+    <div class="categories">
+<button class="category-btn" onclick="loadSection('trending')">Trending</button>
+<button class="category-btn" onclick="loadSection('bollywood')">Bollywood</button>
+<button class="category-btn" onclick="loadSection('south')">South Indian</button>
+<button class="category-btn" onclick="loadSection('hollywood')">Hollywood</button>
+<button class="category-btn" onclick="loadSection('action')">Action</button>
+<button class="category-btn" onclick="loadSection('comedy')">Comedy</button>
+<button class="category-btn" onclick="loadSection('drama')">Drama</button>
+<button class="category-btn" onclick="loadSection('thriller')">Thriller</button>
+<button class="category-btn" onclick="loadSection('romance')">Romance</button>
+<button class="category-btn" onclick="loadSection('horror')">Horror</button>
+<button class="category-btn" onclick="loadSection('sci-fi')">Sci-Fi</button>
+<button class="category-btn" onclick="loadSection('fantasy')">Fantasy</button>
+<button class="category-btn" onclick="loadSection('animation')">Animation</button>
+<button class="category-btn" onclick="loadSection('documentary')">Documentary</button>
+<button class="category-btn" onclick="loadSection('18+')">18+ Movies</button>
+<button class="category-btn" onclick="loadSection('adult')">Adult Content</button>
+<button class="category-btn" onclick="loadSection('hindi-adult')">genres-10749</button>
+    </div>
+
+    <main id="main-content">
+        <!-- Sections will be loaded here -->
+    </main>
+
+    <div id="movie-details" class="movie-details">
+        <!-- Movie details will be loaded here -->
+    </div>
+
+    <script>
+        const API_KEY = '57901e4f4f3052e40961899988c77f44';
+        const BASE_URL = 'https://api.themoviedb.org/3';
+        const IMAGE_BASE_URL = 'https://image.tmdb.org/t/p/w500';
+
+        // Load section content
+        async function loadSection(category) {
+            let endpoint = '/discover/movie';
+            let params = new URLSearchParams({
+                api_key: API_KEY,
+                language: 'en-US',
+                sort_by: 'popularity.desc',
+                page: 1
+            });
+
+            // Customize parameters based on category
+            switch(category) {
+    case 'trending':
+            params.append('sort_by', 'popularity.desc');
+            break;
+        case 'hit':
+            // Assuming a way to filter hit movies
+            params.append('minimum_rating', 9.0); // Example filter for hit movies
+            break;
+        case 'bollywood':
+            params.append('with_original_language', 'hi');
+            break;
+        case 'south':
+            params.append('with_original_language', 'ta');
+            break;
+        case 'hollywood':
+            params.append('with_original_language', 'en');
+            break;
+        case 'action':
+            params.append('with_genres', '28'); // Action
+            break;
+        case 'comedy':
+            params.append('with_genres', '35'); // Comedy
+            break;
+        case 'drama':
+            params.append('with_genres', '18'); // Drama
+            break;
+        case 'thriller':
+            params.append('with_genres', '53'); // Thriller
+            break;
+        case 'romance':
+            params.append('with_genres', '10749'); // Romance
+            break;
+        case 'horror':
+            params.append('with_genres', '27'); // Horror
+            break;
+        case 'sci-fi':
+            params.append('with_genres', '878'); // Sci-Fi
+            break;
+        case 'fantasy':
+            params.append('with_genres', '14'); // Fantasy
+            break;
+        case 'animation':
+            params.append('with_genres', '16'); // Animation
+            break;
+        case 'documentary':
+            params.append('with_genres', '99'); // Documentary
+            break;
+        case '18+':
+            params.append('certification_country', 'US'); // Assuming US certification for 18+
+            params.append('certification', 'R'); // 'R' rating as a representation for 18+
+            break;
+		case 'adult':
+        params.append('with_genres', '10749'); // Adult category may be under a specific genre code.
+        break;
+        case 'hindi-adult':
+            params.append('with_original_language', 'hi');
+            params.append('with_genres', '10749'); // Adult genre
+            break;
+        default:
+            console.log('Unknown category');
+            return;
+            }
+
+            try {
+                const response = await fetch(`${BASE_URL}${endpoint}?${params}`);
+                const data = await response.json();
+                displayMovies(category, data.results);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Display movies in grid
+        function displayMovies(category, movies) {
+            const mainContent = document.getElementById('main-content');
+            const section = document.createElement('section');
+            section.className = 'section';
+            section.innerHTML = `
+                <h2 class="section-title">${category.charAt(0).toUpperCase() + category.slice(1)} Movies</h2>
+                <div class="movie-grid">
+                    ${movies.map(movie => `
+                        <div class="movie-card" onclick="showMovieDetails(${movie.id})">
+                            <img src="${IMAGE_BASE_URL}${movie.poster_path}" 
+                                 alt="${movie.title}" 
+                                 class="movie-poster">
+                            <div class="movie-info">
+                                <h3>${movie.title}</h3>
+                                <div class="rating">⭐ ${movie.vote_average}/10</div>
+								
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            mainContent.innerHTML = '';
+            mainContent.appendChild(section);
+        }
+
+        // Show movie details
+        async function showMovieDetails(movieId) {
+            try {
+                const response = await fetch(
+                    `${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&append_to_response=videos,credits`
+                );
+                const movie = await response.json();
+                
+                const detailsPage = document.getElementById('movie-details');
+                detailsPage.innerHTML = `
+                    <button class="back-btn" onclick="closeMovieDetails()">← Back</button>
+                    <div class="movie-hero">
+                        <img src="${IMAGE_BASE_URL}${movie.backdrop_path}" 
+                             alt="${movie.title}" 
+                             class="movie-poster-large">
+                        <div class="movie-details-info">
+                            <h1>${movie.title}</h1>
+							<p><strong>Popularity Status:</strong> <span id="movie-status">${getMovieStatus(movie.budget, movie.revenue)}</span></p>
+                            <p class="rating">⭐ ${movie.vote_average}/10</p>
+                            <p><strong>Release Date:</strong> ${movie.release_date}</p>
+                            <p><strong>Runtime:</strong> ${movie.runtime} minutes</p>
+                            <p><strong>Genre:</strong> ${movie.genres.map(g => g.name).join(', ')}</p>
+                            <p><strong>Overview:</strong> ${movie.overview}</p>
+							<p><strong>Vote Count:</strong> ${movie.vote_count}</p>
+							
+							<div class="watch-options">
+                                <div class="watch-option">
+                                    <h4>Financial Information <i class="fa fa-long-arrow-right"></i></h4><br/>
+							<p><strong>Budget:</strong> $${movie.budget.toLocaleString()}</p>
+							<p><strong>Revenue:</strong> $${movie.revenue.toLocaleString()}</p>
+							<p><strong>Popularity Status:</strong> <span id="movie-status">${getMovieStatus(movie.budget, movie.revenue)}</span></p><br/>
+							<p><strong>Popularity:</strong> ${movie.popularity}</p>
+							<p><strong>Status:</strong> ${movie.status}</p>
+							
+							
+							
+                                </div>
+                                <div class="watch-option">
+                                    <h4>Production Companies <i class="fa fa-long-arrow-right"></i></h4><br/>
+                            <p>${movie.production_companies.map(pc => pc.name).join(', ')}</p>
+							<p><strong>Production Countries:</strong> ${movie.production_countries.map(country => country.name).join(', ')}</p><br/>
+							<p><strong>Tagline:</strong> "${movie.tagline || 'N/A'}"</p>
+                                </div>
+                                <div class="watch-option">
+                                    <h4>Language and Country Information <i class="fa fa-long-arrow-right"></i></h4><br/>
+<p><strong>Original Language:</strong> ${movie.original_language}</p>
+<p><strong>Spoken Languages:</strong> ${movie.spoken_languages.map(lang => lang.english_name).join(', ')}</p>
+<p><strong>Production Countries:</strong> ${movie.production_countries.map(country => country.name).join(', ')}</p>
+
+                                </div>
+								
+								
+                            </div>
+							
+       <div class="watch-options">
+                                <div class="watch-option">
+                                    <h4>Ratings and Popularity <i class="fa fa-long-arrow-right"></i></h4><br/>
+<p><strong>Rating:</strong> ${movie.vote_average}/10</p>
+<p><strong>Vote Count:</strong> ${movie.vote_count}</p>
+<p><strong>Popularity:</strong> ${movie.popularity}</p>
+                                </div>
+                                <div class="watch-option">
+                                    <h3>Crew and Cast Information <i class="fa fa-long-arrow-right"></i></h3><br/>
+<p><strong>Director:</strong> ${movie.credits.crew.find(c => c.job === 'Director')?.name || 'N/A'}</p>
+<p><strong>Writers:</strong> ${movie.credits.crew.filter(c => c.job === 'Writer').map(writer => writer.name).join(', ')}</p>
+<p><strong>Cast:</strong> ${movie.credits.cast.slice(0, 5).map(actor => actor.name).join(', ')} (and more)</p>
+
+                                </div>
+                                <div class="watch-option">
+                                    <h4>Additional Links <i class="fa fa-long-arrow-right"></i></h4><br/>
+<p><strong>Homepage:</strong> <a href="${movie.homepage}" target="_blank" style="background: linear-gradient(to right,#159957, #155799, #3f5efb); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; text-decoration: none;">${movie.title}</a></p>
+<p><strong>IMDB Link:</strong> <a href="https://www.imdb.com/title/${movie.imdb_id}" target="_blank" style="background: linear-gradient(to right,#159957, #155799, #3f5efb); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent; text-decoration: none;">IMDB Page</a></p>
+
+                                </div>
+								
+		</div>
+					
+
+					
+                            <div class="trailer">
+                                ${movie.videos.results[0] ? `
+                                    <h3>Trailer</h3>
+                                    <iframe width="100%" 
+                                            height="315" 
+                                            src="https://www.youtube.com/embed/${movie.videos.results[0].key}" 
+                                            frameborder="0" 
+                                            allowfullscreen></iframe>
+                                ` : ''}
+                            </div>
+
+                            <h3>Where to Watch</h3>
+                            <div class="watch-options">
+                                <div class="watch-option">
+                                    <h4>Free D & W</h4>
+									<p><u><b>Free Download : </b></u></p>
+                                    <a href="https://ww3.pogolinks.digital" target="_blank" style="color: #000;  text-decoration: none;"><p>PogoLinks</p></a>
+									<a href="https://bollyflix.date/" target="_blank" style="color: #000;  text-decoration: none;"><p>Bollyflix</p></a>
+									<a href="https://9xflix.cc/" target="_blank" style="color: #000;  text-decoration: none;"><p>9xflix</p></a>
+									<br/>
+									<p><u><b>Free Watch : </b></u></p>
+                                    <p style="color: #000;"><a href="https://www.dailymotion.com/" style="color: #000;  text-decoration: none;" target="_blank">Dailymotion</a></p>
+									<p style="color: #000;"><a href="https://tubitv.com/" style="color: #000;  text-decoration: none;" target="_blank">Tubi</a></p>
+									<p style="color: #000;"><a href="https://www.crackle.com/" style="color: #000;  text-decoration: none;" target="_blank">Crackle</a></p>
+									<p style="color: #000;"><a href="https://pluto.tv/" style="color: #000;  text-decoration: none;" target="_blank">Pluto TV</a></p>
+									<p style="color: #000;"><a href="https://www.youtube.com/movies" style="color: #000;  text-decoration: none;" target="_blank">YouTube Movies</a></p>
+                                </div>
+                                <div class="watch-option">
+                                    <h4>Premium</h4>
+                                    <a href="https://www.netflix.com/" target="_blank" style="color: #000;  text-decoration: none;"><p>Netflix</p></a>
+                                    <a href="https://www.primevideo.com/" target="_blank" style="color: #000;  text-decoration: none;"><p>Amazon Prime</p></a>
+                                    <a href="https://www.disneyplus.com/" target="_blank" style="color: #000;  text-decoration: none;"><p>Disney+</p></a>
+                                </div>
+                                <div class="watch-option">
+                                    <h4>Rent/Buy</h4>
+                                    <a href="https://tv.apple.com/" target="_blank" style="color: #000;  text-decoration: none;"><p>Apple TV</p></a>
+                                    <a href="https://www.hulu.com/" target="_blank" style="color: #000;  text-decoration: none;"><p>Hulu</p></a>
+                                </div>
+                            </div>
+
+                            <h3>Cast</h3>
+                            <div class="cast-grid">
+                                ${movie.credits.cast.slice(0, 6).map(actor => `
+                                    <div class="cast-card">
+                                        <img src="${IMAGE_BASE_URL}${actor.profile_path}" 
+                                             alt="${actor.name}"
+                                             class="cast-image"
+                                             onerror="this.src='/api/placeholder/150/200'">
+                                        <div class="cast-info">
+                                            <h4>${actor.name}</h4>
+    <p><strong>Movie Character:</strong> ${actor.character}</p><br/>
+    <p><strong>Known For:</strong> ${actor.known_for_department}</p>
+    <p><strong>Popularity:</strong> ${actor.popularity}</p>
+    <p><strong>Biography:</strong> <a href="https://www.themoviedb.org/person/${actor.id}" target="_blank" style="color: #d96570; text-decoration: none;">Read more</a></p><br/>
+    <p><strong>TMDB Profile:</strong> <a href="https://www.themoviedb.org/person/${actor.id}" target="_blank" style="background: linear-gradient(to right,#159957, #155799, #3f5efb); -webkit-background-clip: text;-webkit-text-fill-color: transparent; text-decoration: none;">View on TMDB</a></p>
+	
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                detailsPage.style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        function closeMovieDetails() {
+            document.getElementById('movie-details').style.display = 'none';
+        }
+
+        // Search functionality
+        document.querySelector('.search-bar input').addEventListener('input', async (e) => {
+            if (e.target.value.length > 2) {
+                const response = await fetch(
+                    `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${e.target.value}`
+                );
+                const data = await response.json();
+                displayMovies('Search Results', data.results);
+            }
+        });
+
+        // Initialize with trending movies
+        loadSection('trending');
+    </script>
+	<script>
+	function getMovieStatus(budget, revenue) {
+    const profit = revenue - budget;
+    
+    if (revenue === 0) {
+        return "Not Released";
+    } else if (profit > budget * 3) {
+        return "All-Time Blockbuster";
+    } else if (profit > budget * 2) {
+        return "Blockbuster";
+    } else if (profit > budget) {
+        return "Hit";
+    } else if (profit > 0 && profit < budget * 0.5) {
+        return "Average";
+    } else if (profit < 0 && profit > -budget * 0.5) {
+        return "Flop";
+    } else if (profit < -budget * 0.5) {
+        return "Disaster";
+    } else {
+        return "Unknown";
+    }
+}
+
+	</script>
+	
+
+
+
+    <style>
+        .chat-icon {
+            position: fixed;
+			  bottom: 10px;
+			  right: 10px;
+			  width: 50px;
+			  height: 50px;
+            background: linear-gradient(135deg,#159957, #155799, #3f5efb);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: transform 0.3s;
+        }
+
+        .chat-icon:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-icon i {
+            color: white;
+            font-size: 24px;
+        }
+
+        .chat-container {
+            position: fixed;
+            bottom: 70px;
+            right: 20px;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;
+            flex-direction: column;
+            z-index: 1000;
+            overflow: hidden;
+        }
+
+        @media (max-width: 480px) {
+            .chat-container {
+                width: 90%;
+                height: 80vh;
+                right: 5%;
+                bottom: 70px;
+            }
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg,#159957, #155799, #3f5efb);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .close-chat {
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 15px;
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            max-width: 80%;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .user-message {
+            background: #E3F2FD;
+            margin-left: auto;
+            color: #1565C0;
+        }
+
+        .bot-message {
+            background: #F5F5F5;
+            margin-right: auto;
+            color: #333;
+        }
+
+        .chat-input {
+            padding: 15px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .chat-input button {
+            background: linear-gradient(135deg,#159957, #155799, #3f5efb);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: opacity 0.3s;
+        }
+
+        .chat-input button:hover {
+            opacity: 0.9;
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            width: fit-content;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #666;
+            border-radius: 50%;
+            margin-right: 4px;
+            animation: typing 1s infinite;
+        }
+
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes typing {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Chat Icon -->
+    <div class="chat-icon" onclick="toggleChat()">
+        <i class="fa fa-comments"></i>
+    </div>
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+        <div class="chat-header">
+            <h3>Clory MDB Assistant</h3>
+            <span class="close-chat" onclick="toggleChat()">×</span>
+        </div>
+        <div class="chat-messages">
+            <div class="message bot-message">
+                Hi! I'm your movie assistant. Ask me anything about movies or how to use this website! <br/><br/><span style="background: linear-gradient(to right,#159957, #155799); -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;"> Made by Clory Cr</span>
+            </div>
+            <div class="typing-indicator">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Type your message..." onkeypress="handleKeyPress(event)">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+		<p style="text-align: Center; font-size: 10px;">Clory MDB can make mistakes. Check important info. </p>
+    </div>
+
+    <script>
+        // Your Gemini API key
+        const GEMINI_API_KEY = 'AIzaSyDFdYDjLbyC73TdejXW6oUWQoAJUVvxPPE';
+        const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+        
+        let isChatOpen = false;
+        let isWaitingForResponse = false;
+
+        function toggleChat() {
+            const chatContainer = document.querySelector('.chat-container');
+            isChatOpen = !isChatOpen;
+            chatContainer.style.display = isChatOpen ? 'flex' : 'none';
+        }
+
+        function showTypingIndicator() {
+            const indicator = document.querySelector('.typing-indicator');
+            indicator.style.display = 'block';
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.querySelector('.typing-indicator');
+            indicator.style.display = 'none';
+        }
+        function toggleChat() {
+            const chatContainer = document.querySelector('.chat-container');
+            isChatOpen = !isChatOpen;
+            chatContainer.style.display = isChatOpen ? 'flex' : 'none';
+        }
+        function appendMessage(message, isUser) {
+            const messagesContainer = document.querySelector('.chat-messages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            messageDiv.textContent = message;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        async function getGeminiResponse(userMessage) {
+            try {
+                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `Context: This is a movie website chatbot. The website shows movies, their details, and where to watch them. The website has features like search, categories, and detailed movie information.
+
+                                User question: ${userMessage}
+
+                                Please provide a helpful response about the movies or website features.`
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                console.error('Error:', error);
+                return "I'm sorry, I encountered an error. Please try again later.";
+            }
+        }
+
+        async function sendMessage() {
+            if (isWaitingForResponse) return;
+
+            const input = document.querySelector('.chat-input input');
+            const message = input.value.trim();
+            
+            if (!message) return;
+
+            appendMessage(message, true);
+            input.value = '';
+            
+            isWaitingForResponse = true;
+            showTypingIndicator();
+
+            try {
+                const response = await getGeminiResponse(message);
+                appendMessage(response, false);
+            } catch (error) {
+                appendMessage("I'm sorry, I encountered an error. Please try again later.", false);
+            } finally {
+                hideTypingIndicator();
+                isWaitingForResponse = false;
+            }
+        }
+
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        // Initialize chat with welcome message
+        document.addEventListener('DOMContentLoaded', () => {
+            const messagesContainer = document.querySelector('.chat-messages');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
+    </script>
+</body>
+</html>
+
+<!-- AIzaSyDFdYDjLbyC73TdejXW6oUWQoAJUVvxPPE gemini -->
